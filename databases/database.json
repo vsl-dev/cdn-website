@@ -1,0 +1,14 @@
+{
+    "counter": 0,
+    "cdn": {
+        "0": {
+            "id": 0,
+            "source": "file-upload",
+            "url": "https://localhost:1200/uploads/0.jpeg",
+            "nsfw": false,
+            "tags": [],
+            "adeddIn": 1672397173549,
+            "size": "274.04KB"
+        }
+    }
+}
