@@ -1,5 +1,5 @@
 {
-    "counter": 0,
+    "counter": 2,
     "cdn": {
         "0": {
             "id": 0,
@@ -9,6 +9,28 @@
             "tags": [],
             "adeddIn": 1672397173549,
             "size": "274.04KB"
+        },
+        "1": {
+            "id": 1,
+            "source": "https://cdn.vsldev.tk/images/J1iZ4LDQiBZ6JZcrCbu4.png",
+            "url": "https://localhost:1200/uploads/1.png",
+            "nsfw": false,
+            "tags": [
+                ""
+            ],
+            "adeddIn": 1677345620478,
+            "size": "3MB"
+        },
+        "2": {
+            "id": 2,
+            "source": "file-upload",
+            "url": "https://localhost:1200/uploads/2.jpeg",
+            "nsfw": false,
+            "tags": [
+                ""
+            ],
+            "adeddIn": 1677345631411,
+            "size": "6.54MB"
         }
     }
 }
