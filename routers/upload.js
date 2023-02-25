@@ -4,9 +4,7 @@ const multer = require("multer");
 const fs = require("fs");
 const bytes = require("bytes");
 const axios = require("axios");
-const request = require("request");
 const mime = require("mime");
-const fetch = require("node-fetch");
 
 const authKey = "vsldev";
 
