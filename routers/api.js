@@ -8,7 +8,7 @@ const db = global.db;
 
 router.use((req, res, next) => {
   if (config.securityLevel !== 0) {
-    if (req.get("Authorization") !== authKey)
+    if (req.get("Authorization") !== config.authKey)
       return res.status(401).json({ code: 401, message: "Access denied" });
   }
   next();
