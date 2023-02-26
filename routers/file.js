@@ -15,13 +15,28 @@ const db = global.db;
 const upload = multer({ dest: "./uploads/" });
 
 router.use((req, res, next) => {
-  if (req.get("Authorization") !== authKey)
-    return res.status(401).json({ code: 401, message: "Access denied" });
+  if (config.securityLevel !== 0) {
+    if (config.securityLevel >= 1) {
+      if (
+        !config.trustedDomains.some((domain) => req.get("origin").match(domain))
+      )
+        return res.status(401).json({ code: 401, message: "Accesss denied" });
+    }
+    if (config.securityLevel >= 2) {
+      if (req.get("Authorization") !== authKey)
+        return res.status(401).json({ code: 401, message: "Access denied" });
+    }
+  }
   next();
 });
 
 router.post("/upload/file", upload.single("file"), (req, res) => {
   try {
+    const allFiles = fs.readdirSync("./uploads");
+    if (allFiles.length > config.uploadLimit)
+      return res
+        .status(400)
+        .json({ code: 400, message: "You have reached the upload limit" });
     if (!config.uploadOnly.includes("all"))
       if (!config.uploadOnly.some((a) => req.file.mimetype.match(a)))
         return res.status(400).json({
@@ -57,7 +72,7 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
     var json = {
       id: id,
       source: "file-upload",
-      url: `https://localhost:1200/uploads/${id}.${type}`,
+      url: config.baseURL + `/uploads/${id}.${type}`,
       file: id + "." + type,
       oldType: req.file.mimetype,
       nsfw: req.body.nsfw ?? false,
@@ -74,7 +89,7 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
       res.status(200).json({
         code: 200,
         message: "File uploaded!",
-        file: `https://localhost:1200/uploads/${id}.${type}`,
+        file: config.baseURL + `/uploads/${id}.${type}`,
       });
     });
   } catch (err) {
@@ -85,6 +100,11 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
 
 router.post("/upload/link", (req, res) => {
   try {
+    const allFiles = fs.readdirSync("./uploads");
+    if (allFiles.length > config.uploadLimit)
+      return res
+        .status(400)
+        .json({ code: 400, message: "You have reached the upload limit" });
     var typeA, typeB, type, id;
     typeA = mime.getType(req.body.url);
     typeB = mime.getExtension(typeA);
@@ -119,7 +139,7 @@ router.post("/upload/link", (req, res) => {
     var json = {
       id: id,
       source: req.body.url,
-      url: `https://localhost:1200/uploads/${id}.${type}`,
+      url: config.baseURL + `/uploads/${id}.${type}`,
       file: id + "." + type,
       oldType: typeA,
       nsfw: req.body.nsfw ?? false,
@@ -133,7 +153,7 @@ router.post("/upload/link", (req, res) => {
     res.status(200).json({
       code: 200,
       message: "File uploaded!",
-      file: `https://localhost:1200/uploads/${id}.${type}`,
+      file: config.baseURL + `/uploads/${id}.${type}`,
     });
   } catch (err) {
     res.status(500).json({ code: 500, message: "Internal server error" });

@@ -39,6 +39,6 @@ app.get("/*", (req, res) => {
 
 // Other
 
-app.listen(1200, () => {
-  console.log("App is running on http://localhost:1200");
+app.listen(config.port, () => {
+  console.log("App is running on http://localhost:" + config.port);
 });

@@ -6,6 +6,14 @@ const config = require("../config.js");
 
 const db = global.db;
 
+router.use((req, res, next) => {
+  if (config.securityLevel !== 0) {
+    if (req.get("Authorization") !== authKey)
+      return res.status(401).json({ code: 401, message: "Access denied" });
+  }
+  next();
+});
+
 router.get("/random/:type", (req, res) => {
   res.status(200).json({ code: 200, message: null });
 });
@@ -57,7 +65,12 @@ router.get("/tree", (req, res) => {
         });
       }
     });
-    res.status(200).json({ code: 200, message: "Ok", data: list ?? {} });
+    res.status(200).json({
+      code: 200,
+      message: "Ok",
+      totalFiles: fs.readdirSync("./uploads").length ?? 0,
+      tree: list ?? {},
+    });
   } catch (err) {
     res.status(500).json({ code: 500, message: "Internal server error" });
   }
