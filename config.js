@@ -1,7 +1,7 @@
 const config = {
   port: 1200, // Server port
   baseURL: "http://localhost:1200", // Base url
-  securityLevel: 0, // Security levels | Level 0: Security system is disabled | Level 1: Trusted domains are allowed to access | Level 2: Domain must be trusted domain and have access key
+  securityLevel: 2, // Security levels | Level 0: Security system is disabled | Level 1: Trusted domains are allowed to access | Level 2: Domain must be trusted domain and have access key
   trustedDomains: ["https://vsldev.tk"], // Trusted domain list level
   authKey: "vsldev", // Access key for uploading
   uploadOnly: ["image/"], // You can use 'video/' and 'audio/' for other types of files or type ['all'] for all type of files .exe, .txt and more

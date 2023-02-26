@@ -1,4 +1,5 @@
 const express = require("express");
+const rateLimit = require("express-rate-limit");
 const router = express.Router();
 const multer = require("multer");
 const fs = require("fs");
@@ -12,37 +13,68 @@ const authKey = config.authKey;
 
 const db = global.db;
 
+const spamLimiter = rateLimit({
+  windowMs: 1 * 60 * 1000, // 1 minutes
+  max: 15, // 15 requests per minute
+  standardHeaders: true,
+  legacyHeaders: false,
+  message: {
+    code: 429,
+    message:
+      "Too many requests, you have been rate limited. Please try again later.",
+  },
+}); // Rate limiter
+
+const accessManager = () => {
+  return function (req, res, next) {
+    if (config.securityLevel !== 0) {
+      try {
+        if (config.securityLevel >= 1) {
+          if (
+            !config.trustedDomains.some((domain) =>
+              req.get("origin").match(domain)
+            )
+          )
+            return res
+              .status(401)
+              .json({ code: 401, message: "Accesss denied" });
+        }
+      } catch (err) {}
+      try {
+        if (config.securityLevel >= 2) {
+          if (req.get("Authorization") !== authKey)
+            return res
+              .status(401)
+              .json({ code: 401, message: "Access denied" });
+        }
+      } catch (err) {}
+    }
+    next();
+  };
+}; // Access manager
+
 const upload = multer({ dest: "./uploads/" });
 
-router.use((req, res, next) => {
-  if (config.securityLevel !== 0) {
-    if (config.securityLevel >= 1) {
-      if (
-        !config.trustedDomains.some((domain) => req.get("origin").match(domain))
-      )
-        return res.status(401).json({ code: 401, message: "Accesss denied" });
-    }
-    if (config.securityLevel >= 2) {
-      if (req.get("Authorization") !== authKey)
-        return res.status(401).json({ code: 401, message: "Access denied" });
-    }
-  }
-  next();
-});
+router.use(spamLimiter);
+router.use(accessManager());
 
 router.post("/upload/file", upload.single("file"), (req, res) => {
   try {
     const allFiles = fs.readdirSync("./uploads");
-    if (allFiles.length > config.uploadLimit)
+    if (allFiles.length > config.uploadLimit) {
+      fs.unlinkSync(req.file.path);
       return res
         .status(400)
         .json({ code: 400, message: "You have reached the upload limit" });
+    }
     if (!config.uploadOnly.includes("all"))
-      if (!config.uploadOnly.some((a) => req.file.mimetype.match(a)))
+      if (!config.uploadOnly.some((a) => req.file.mimetype.match(a))) {
+        fs.unlinkSync(req.file.path);
         return res.status(400).json({
           code: 400,
           message: "Invalid type",
         });
+      }
     var id, tempPath, targetPath, typeA, type;
     id = db.fetch("counter") + 1;
     db.add("counter", 1);
@@ -93,8 +125,12 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
       });
     });
   } catch (err) {
+    fs.exists(req.file.path, (e) => {
+      if (!e) return null;
+      fs.unlinkSync(req.file.path);
+    });
     res.status(500).json({ code: 500, message: "Internal server error" });
-    console.log(err);
+    console.log("Upload Error File:", err);
   }
 });
 
@@ -180,6 +216,10 @@ router.post("/delete", (req, res) => {
     res.status(500).json({ code: 500, message: "Internal server error" });
     console.log("File Deleting Error:", err);
   }
+});
+
+router.get("/*", (req, res) => {
+  res.status(404).json({ code: 404, message: "Not found" });
 });
 
 function makeid(length) {
