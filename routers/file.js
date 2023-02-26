@@ -6,19 +6,19 @@ const bytes = require("bytes");
 const axios = require("axios");
 const mime = require("mime");
 
+const config = require("../config.js");
+
 const authKey = config.authKey;
 
 const db = global.db;
 
 const upload = multer({ dest: "./uploads/" });
 
-const config = require("../config.js");
-
-// router.use((req, res, next) => {
-//   if (req.get("Authorization") !== authKey)
-//     return res.status(401).json({ code: 401, message: "Access denied" });
-//   next();
-// });
+router.use((req, res, next) => {
+  if (req.get("Authorization") !== authKey)
+    return res.status(401).json({ code: 401, message: "Access denied" });
+  next();
+});
 
 router.post("/upload/file", upload.single("file"), (req, res) => {
   try {
@@ -137,7 +137,7 @@ router.post("/upload/link", (req, res) => {
     });
   } catch (err) {
     res.status(500).json({ code: 500, message: "Internal server error" });
-    console.log(err);
+    console.log("File Upload Error Link:", err);
   }
 });
 

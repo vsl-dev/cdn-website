@@ -1,4 +1,18 @@
 {
-  "counter": -1,
-  "uploads": {}
+    "counter": 2,
+    "uploads": {
+        "0": {
+            "id": 0,
+            "source": "file-upload",
+            "url": "https://localhost:1200/uploads/0.webp",
+            "file": "0.webp",
+            "oldType": "image/png",
+            "nsfw": false,
+            "tags": [
+                ""
+            ],
+            "adeddIn": 1677402555602,
+            "size": "23.58KB"
+        }
+    }
 }

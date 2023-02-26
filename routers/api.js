@@ -10,6 +10,11 @@ router.get("/random/:type", (req, res) => {
   res.status(200).json({ code: 200, message: null });
 });
 
+router.get("/test", (req, res) => {
+  console.log(req.get("origin"));
+  res.json({ a: String(req.get("host")), b: String(req.get("origin")) });
+});
+
 router.get("/tree", (req, res) => {
   try {
     const counter = db.fetch("counter");
