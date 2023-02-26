@@ -6,7 +6,7 @@ const bytes = require("bytes");
 const axios = require("axios");
 const mime = require("mime");
 
-const authKey = "vsldev";
+const authKey = config.authKey;
 
 const db = global.db;
 

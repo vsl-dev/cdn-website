@@ -3,8 +3,8 @@ const express = require("express");
 const fs = require("fs");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-const path = require("path");
 const { JsonDatabase } = require("wio.db");
+const config = require("./config.js");
 const db = new JsonDatabase({
   databasePath: "./databases/database.json",
 });
@@ -25,7 +25,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/panel", (req, res) => {
-  var key = "vsldev";
+  var key = config.authKey;
   if (req.query.key !== key) return res.sendFile(__dirname + "/login.html");
   res.sendFile(__dirname + "/panel.html");
 });
