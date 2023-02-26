@@ -30,7 +30,7 @@ app.get("/panel", (req, res) => {
   res.sendFile(__dirname + "/panel.html");
 });
 
-app.use("/upload", require("./routers/upload.js")); // Api routers
+app.use("/file", require("./routers/file.js")); // File uploading & deleting routers
 
 app.get("/*", (req, res) => {
   res.status(404).json({ code: 404, message: "Not found" });
