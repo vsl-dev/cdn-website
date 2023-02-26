@@ -31,6 +31,7 @@ app.get("/panel", (req, res) => {
 });
 
 app.use("/file", require("./routers/file.js")); // File uploading & deleting routers
+app.use("/api", require("./routers/api.js")); // Api routers
 
 app.get("/*", (req, res) => {
   res.status(404).json({ code: 404, message: "Not found" });

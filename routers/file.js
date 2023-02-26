@@ -22,16 +22,22 @@ const config = require("../config.js");
 
 router.post("/upload/file", upload.single("file"), (req, res) => {
   try {
-    if (!config.uploadOnly.some((a) => req.file.mimetype.match(a)))
-      return res.status(400).json({
-        code: 400,
-        message: "Invalid type",
-      });
-    var id, tempPath, targetPath, type;
+    if (!config.uploadOnly.includes("all"))
+      if (!config.uploadOnly.some((a) => req.file.mimetype.match(a)))
+        return res.status(400).json({
+          code: 400,
+          message: "Invalid type",
+        });
+    var id, tempPath, targetPath, typeA, type;
     id = db.fetch("counter") + 1;
     db.add("counter", 1);
     tempPath = req.file.path;
-    type = mime.getExtension(req.file.mimetype);
+    typeA = mime.getExtension(req.file.mimetype);
+    type = req.file.mimetype.includes("image/")
+      ? config.convertImagesTo === "default"
+        ? typeA
+        : config.convertImagesTo
+      : typeA;
     targetPath = `./uploads/${id}.${
       req.file.mimetype.includes("image/")
         ? config.convertImagesTo === "default"
@@ -53,6 +59,7 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
       source: "file-upload",
       url: `https://localhost:1200/uploads/${id}.${type}`,
       file: id + "." + type,
+      oldType: req.file.mimetype,
       nsfw: req.body.nsfw ?? false,
       tags: tags ?? [],
       adeddIn: Date.now(),
@@ -78,11 +85,17 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
 
 router.post("/upload/link", (req, res) => {
   try {
-    var typeA = mime.getType(req.body.url);
-    var type = mime.getExtension(typeA);
-    if (!config.uploadOnly.some((a) => typeA.match(a)))
-      return res.status(400).json({ code: 400, message: "Invalid type" });
-    var id;
+    var typeA, typeB, type, id;
+    typeA = mime.getType(req.body.url);
+    typeB = mime.getExtension(typeA);
+    type = typeA.includes("image/")
+      ? config.convertImagesTo === "default"
+        ? typeB
+        : config.convertImagesTo
+      : typeB;
+    if (!config.uploadOnly.includes("all"))
+      if (!config.uploadOnly.some((a) => typeA.match(a)))
+        return res.status(400).json({ code: 400, message: "Invalid type" });
     id = db.fetch("counter") + 1;
     db.add("counter", 1);
     axios({
@@ -91,15 +104,7 @@ router.post("/upload/link", (req, res) => {
       responseType: "stream",
     }).then(function (response) {
       response.data.pipe(
-        fs.createWriteStream(
-          `./uploads/${id.toString()}.${
-            typeA.includes("image/")
-              ? config.convertImagesTo === "default"
-                ? type
-                : config.convertImagesTo
-              : type
-          }`
-        )
+        fs.createWriteStream(`./uploads/${id.toString()}.${type}`)
       );
     });
 
@@ -116,6 +121,7 @@ router.post("/upload/link", (req, res) => {
       source: req.body.url,
       url: `https://localhost:1200/uploads/${id}.${type}`,
       file: id + "." + type,
+      oldType: typeA,
       nsfw: req.body.nsfw ?? false,
       tags: tags ?? [],
       adeddIn: Date.now(),
@@ -138,10 +144,12 @@ router.post("/upload/link", (req, res) => {
 router.post("/delete", (req, res) => {
   try {
     const { file } = req.body;
-    const info = db.fetch(`uploads.${file.replaceAll(".webp", "")}`);
+    const info = Object.values(db.fetch(`uploads`)).find(
+      (x) => x.file === file
+    );
     fs.exists("./uploads/" + file, (e) => {
       if (e) {
-        if (info !== null) db.delete(`uploads.${file.replaceAll(".webp", "")}`);
+        if (info !== undefined) db.delete(`uploads.${info.id}`);
         fs.unlinkSync("./uploads/" + file);
         return res.status(200).json({ code: 200, message: "File deleted" });
       } else {
