@@ -1,16 +1,18 @@
 {
-  "counter": 0,
-  "uploads": {
-    "0": {
-      "id": 0,
-      "source": "https://cdn.vsldev.tk/images/J0dONfh5D8sPMyZuyFxS.jpeg",
-      "url": "http://localhost:1200/uploads/0.webp",
-      "file": "0.webp",
-      "oldType": "image/jpeg",
-      "nsfw": false,
-      "tags": [""],
-      "adeddIn": 1677405712811,
-      "size": null
+    "counter": 0,
+    "uploads": {
+        "0": {
+            "id": 0,
+            "source": "https://cdn.vsldev.tk/images/J0dONfh5D8sPMyZuyFxS.jpeg",
+            "url": "http://localhost:1200/uploads/0.webp",
+            "file": "0.webp",
+            "oldType": "image/jpeg",
+            "nsfw": false,
+            "tags": [
+                ""
+            ],
+            "adeddIn": 1677405712811,
+            "size": null
+        }
     }
-  }
 }

@@ -8,11 +8,12 @@
   </head>
   <body>
     <form
-      method="POST"
+      id="fileForm"
       enctype="multipart/form-data"
       action="/file/upload/file"
+      method="POST"
     >
-      <input type="file" name="file" required />
+      <input type="file" name="file" id="fileInpt" required />
 
       <input type="text" name="tags" />
 
@@ -35,10 +36,23 @@
 
     <br />
     <div id="files">
-      <div id="images">Images:</div>
-      <div id="videos">Videos:</div>
-      <div id="audios">Audios:</div>
-      <div id="others">Others:</div>
+      <h1 style="margin: 0; padding: 2px;">Files:</h1>
+      <div id="images">
+        Images:
+        <div></div>
+      </div>
+      <div id="videos">
+        Videos:
+        <div></div>
+      </div>
+      <div id="audios">
+        Audios:
+        <div></div>
+      </div>
+      <div id="others">
+        Others:
+        <div></div>
+      </div>
     </div>
 
     <style>
@@ -63,12 +77,13 @@
     </style>
 
     <script>
-      const images = document.getElementById("images");
-      const videos = document.getElementById("videos");
-      const audios = document.getElementById("audios");
-      const others = document.getElementById("others");
+      const images = document.querySelector("#images div");
+      const videos = document.querySelector("#videos div");
+      const audios = document.querySelector("#audios div");
+      const others = document.querySelector("#others div");
 
       function loadImages() {
+        [images, audios, videos, others].forEach((d) => (d.innerHTML = ""));
         fetch("http://localhost:1200/api/tree", {
           method: "GET",
           headers: {
@@ -86,22 +101,28 @@
             data.tree.videos.map((x) => {
               var div = document.createElement("div");
               div.innerHTML = `<a href='${x.url}'>${x.file}</a>`;
-              images.appendChild(div);
+              videos.appendChild(div);
             });
             data.tree.audios.map((x) => {
               var div = document.createElement("div");
               div.innerHTML = `<a href='${x.url}'>${x.file}</a>`;
-              images.appendChild(div);
+              audios.appendChild(div);
             });
             data.tree.others.map((x) => {
               var div = document.createElement("div");
               div.innerHTML = `<a href='${x.url}'>${x.file}</a>`;
-              images.appendChild(div);
+              others.appendChild(div);
             });
           });
       }
 
       loadImages();
+    </script>
+
+    <script>
+      window.onload = () => loadImages();
+      window.onfocus = () => loadImages();
+      window.onblur = () => loadImages();
     </script>
   </body>
 </html>

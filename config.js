@@ -4,9 +4,10 @@ const config = {
   securityLevel: 0, // Security levels | Level 0: Security system is disabled | Level 1: Trusted domains are allowed to access | Level 2: Domain must be trusted domain and have access key
   trustedDomains: ["https://vsldev.tk"], // Trusted domain list level
   authKey: "vsldev", // Access key for uploading
-  uploadOnly: ["image/"], // You can use 'video/' and 'audio/' for other types of files or type ['all'] for all type of files .exe, .txt and more
+  uploadOnly: ["all"], // You can use 'video/' and 'audio/' for other types of files or type ['all'] for all type of files .exe, .txt and more
   convertImagesTo: "webp", // You can change the type of the image with this and make them all the same. You can set the format you want, such as jpg, jpeg or png, if you do not want the format of the file to change, just type 'default'
   uploadLimit: 999, // File limit
+  sizeLimit: 104857600, // File max size limit for uploading ( Default: 100mb )
 };
 
 module.exports = config;

@@ -53,7 +53,10 @@ const accessManager = () => {
   };
 }; // Access manager
 
-const upload = multer({ dest: "./uploads/" });
+const upload = multer({
+  dest: "./uploads/",
+  limits: { fileSize: config.sizeLimit },
+});
 
 router.use(spamLimiter);
 router.use(accessManager());
@@ -124,11 +127,14 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
         file: config.baseURL + `/uploads/${id}.${type}`,
       });
     });
+    console.log(req.files);
   } catch (err) {
-    fs.exists(req.file.path, (e) => {
-      if (!e) return null;
-      fs.unlinkSync(req.file.path);
-    });
+    if (req.file) {
+      fs.exists(req.file.path, (e) => {
+        if (!e) return null;
+        fs.unlinkSync(req.file.path);
+      });
+    }
     res.status(500).json({ code: 500, message: "Internal server error" });
     console.log("Upload Error File:", err);
   }
