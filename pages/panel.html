@@ -4,36 +4,61 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Panel</title>
   </head>
   <body>
-    <form
-      id="fileForm"
-      enctype="multipart/form-data"
-      action="/file/upload/file"
-      method="POST"
-    >
-      <input type="file" name="file" id="fileInpt" required />
+    <h2 align="center" style="font-style: bold">Admin Panel</h2>
+    <div class="menu">
+      <div>
+        <p>Upload File</p>
+        <form
+          id="fileForm"
+          enctype="multipart/form-data"
+          action="/file/upload/file"
+          method="POST"
+        >
+          <input
+            type="file"
+            name="file"
+            id="fileInpt"
+            placeholder="File for upload"
+            required
+          />
 
-      <input type="text" name="tags" />
+          <input type="text" name="tags" placeholder="File tags" />
 
-      <input type="submit" value="Submit" />
-    </form>
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      <div>
+        <p>Upload File From Url</p>
+        <form method="POST" action="/file/upload/link">
+          <input
+            type="url"
+            name="url"
+            placeholder="File url for upload"
+            required
+          />
 
-    <form method="POST" action="/file/upload/link">
-      <input type="url" name="url" required />
+          <input type="text" name="tags" placeholder="File tags" />
 
-      <input type="text" name="tags" />
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+      <div>
+        <p>Delete File</p>
+        <form method="POST" action="/file/delete">
+          <input
+            type="text"
+            name="file"
+            placeholder="File id for deleting"
+            required
+          />
 
-      <input type="submit" value="Submit" />
-    </form>
-
-    <form method="POST" action="/file/delete">
-      <input type="text" name="file" placeholder="fileid" required />
-
-      <input type="submit" value="Submit" />
-    </form>
-
+          <button type="submit">Submit</button>
+        </form>
+      </div>
+    </div>
     <br />
     <div id="files">
       <h1 style="margin: 0; padding: 2px">Files:</h1>
@@ -54,13 +79,61 @@
         <div></div>
       </div>
     </div>
+    <br />
+
+    <div class="settings">
+      <h1 style="margin: 0; padding: 2px">Settings:</h1>
+      <h3>Security Level: ###SECURITY_LEVEL###</h3>
+      <h3>Trusted Domains: ###TRUSTED_DOMAINS###</h3>
+      <h3>Upload Limit: ###UPLOAD_LIMIT###</h3>
+      <h3>Size Limit: ###SIZE_LIMIT###</h3>
+      <h3>Convert Images: ###CONVERT_IMGS###</h3>
+      <h3>Upload Only: ###UPLOAD_ONLY###</h3>
+    </div>
 
     <style>
-      #files {
-        background-color: darkslategrey;
+      body {
+        background-color: white;
+        color: black;
+      }
+
+      h3 {
+        padding: 4px;
+        margin: 0;
+      }
+
+      .menu {
+        background-color: gainsboro;
         border-radius: 11px;
         padding: 7px;
-        color: white;
+      }
+
+      .menu > div {
+        padding: 5px;
+      }
+
+      .menu > div > p {
+        padding: 2px;
+        margin: 0;
+      }
+
+      input {
+        padding: 4px;
+        border-radius: 3px;
+        outline: none;
+        border: none;
+      }
+
+      input[type="file"] {
+        width: 30%;
+        height: 100px;
+        background-color: white;
+      }
+
+      #files {
+        background-color: gainsboro;
+        border-radius: 11px;
+        padding: 7px;
       }
 
       #images div,
@@ -71,8 +144,21 @@
       }
 
       a {
-        color: white;
         text-decoration: none;
+      }
+
+      button {
+        cursor: pointer;
+        padding: 4px;
+        border-radius: 3px;
+        outline: none;
+        border: none;
+      }
+
+      .settings {
+        background-color: gainsboro;
+        padding: 7px;
+        border-radius: 11px;
       }
     </style>
 
@@ -123,6 +209,7 @@
       window.onload = () => loadImages();
       window.onfocus = () => loadImages();
       window.onblur = () => loadImages();
+      setInterval(() => loadImages(), 30000);
     </script>
   </body>
 </html>

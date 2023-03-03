@@ -45,7 +45,14 @@ if (config.panel.panelEnabled) {
 
   router.get("/", isLoggedIn, (req, res) => {
     var panelHtml = fs.readFileSync("./pages/panel.html", "utf8");
-    res.send(panelHtml);
+    var panelEdited = panelHtml
+      .replace("###SECURITY_LEVEL###", config.securityLevel)
+      .replace("###TRUSTED_DOMAINS###", config.trustedDomains)
+      .replace("###UPLOAD_LIMIT###", config.uploadLimit)
+      .replace("###SIZE_LIMIT###", config.sizeLimit)
+      .replace("###CONVERT_IMGS###", config.convertImagesTo)
+      .replace("###UPLOAD_ONLY###", config.uploadOnly);
+    res.send(panelEdited);
   });
 }
 
