@@ -36,7 +36,7 @@
 
     <br />
     <div id="files">
-      <h1 style="margin: 0; padding: 2px;">Files:</h1>
+      <h1 style="margin: 0; padding: 2px">Files:</h1>
       <div id="images">
         Images:
         <div></div>
@@ -84,7 +84,7 @@
 
       function loadImages() {
         [images, audios, videos, others].forEach((d) => (d.innerHTML = ""));
-        fetch("http://localhost:1200/api/tree", {
+        fetch("http://localhost:1200/api/files?sort=type", {
           method: "GET",
           headers: {
             Authrorization: "vsldev",
@@ -93,24 +93,24 @@
         })
           .then((res) => res.json())
           .then((data) => {
-            data.tree.images.map((x) => {
+            data.files.images.map((x) => {
               var div = document.createElement("div");
-              div.innerHTML = `<a href='${x.url}'>${x.file}</a>`;
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
               images.appendChild(div);
             });
-            data.tree.videos.map((x) => {
+            data.files.videos.map((x) => {
               var div = document.createElement("div");
-              div.innerHTML = `<a href='${x.url}'>${x.file}</a>`;
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
               videos.appendChild(div);
             });
-            data.tree.audios.map((x) => {
+            data.files.audios.map((x) => {
               var div = document.createElement("div");
-              div.innerHTML = `<a href='${x.url}'>${x.file}</a>`;
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
               audios.appendChild(div);
             });
-            data.tree.others.map((x) => {
+            data.files.others.map((x) => {
               var div = document.createElement("div");
-              div.innerHTML = `<a href='${x.url}'>${x.file}</a>`;
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
               others.appendChild(div);
             });
           });

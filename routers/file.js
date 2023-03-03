@@ -53,10 +53,7 @@ const accessManager = () => {
   };
 }; // Access manager
 
-const upload = multer({
-  dest: "./uploads/",
-  limits: { fileSize: config.sizeLimit },
-});
+const upload = multer({ dest: "./uploads/" });
 
 router.use(spamLimiter);
 router.use(accessManager());
@@ -69,6 +66,10 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
       return res
         .status(400)
         .json({ code: 400, message: "You have reached the upload limit" });
+    }
+    if (req.file.size > config.sizeLimit) {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ code: 400, message: "File too large" });
     }
     if (!config.uploadOnly.includes("all"))
       if (!config.uploadOnly.some((a) => req.file.mimetype.match(a))) {
@@ -114,6 +115,7 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
       tags: tags ?? [],
       adeddIn: Date.now(),
       size: bytes(req.file.size),
+      sizeBytes: req.file.size,
     };
 
     db.set(`uploads.${id.toString()}`, json);
@@ -127,7 +129,6 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
         file: config.baseURL + `/uploads/${id}.${type}`,
       });
     });
-    console.log(req.files);
   } catch (err) {
     if (req.file) {
       fs.exists(req.file.path, (e) => {
@@ -140,14 +141,16 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
   }
 });
 
-router.post("/upload/link", (req, res) => {
+router.post("/upload/link", async (req, res) => {
   try {
     const allFiles = fs.readdirSync("./uploads");
     if (allFiles.length > config.uploadLimit)
       return res
         .status(400)
         .json({ code: 400, message: "You have reached the upload limit" });
-    var typeA, typeB, type, id;
+    var typeA, typeB, type, id, size, resp;
+    resp = await axios.get(req.body.url);
+    size = parseInt(await resp.headers["content-length"]);
     typeA = mime.getType(req.body.url);
     typeB = mime.getExtension(typeA);
     type = typeA.includes("image/")
@@ -158,6 +161,10 @@ router.post("/upload/link", (req, res) => {
     if (!config.uploadOnly.includes("all"))
       if (!config.uploadOnly.some((a) => typeA.match(a)))
         return res.status(400).json({ code: 400, message: "Invalid type" });
+    if (size > config.sizeLimit) {
+      fs.unlinkSync(req.file.path);
+      return res.status(400).json({ code: 400, message: "File too large" });
+    }
     id = db.fetch("counter") + 1;
     db.add("counter", 1);
     axios({
@@ -187,7 +194,8 @@ router.post("/upload/link", (req, res) => {
       nsfw: req.body.nsfw ?? false,
       tags: tags ?? [],
       adeddIn: Date.now(),
-      size: null,
+      size: bytes(size),
+      sizeBytes: size,
     };
 
     db.set(`uploads.${id.toString()}`, json);
