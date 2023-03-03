@@ -1,5 +1,6 @@
 const express = require("express");
 const fs = require("fs");
+const bytes = require("bytes");
 const router = express.Router();
 
 const config = require("../config.js");
@@ -49,7 +50,7 @@ if (config.panel.panelEnabled) {
       .replace("###SECURITY_LEVEL###", config.securityLevel)
       .replace("###TRUSTED_DOMAINS###", config.trustedDomains)
       .replace("###UPLOAD_LIMIT###", config.uploadLimit)
-      .replace("###SIZE_LIMIT###", config.sizeLimit)
+      .replace("###SIZE_LIMIT###", bytes(config.sizeLimit))
       .replace("###CONVERT_IMGS###", config.convertImagesTo)
       .replace("###UPLOAD_ONLY###", config.uploadOnly);
     res.send(panelEdited);
