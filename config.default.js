@@ -8,6 +8,11 @@ const config = {
   convertImagesTo: "webp", // You can change the type of the image with this and make them all the same. You can set the format you want, such as jpg, jpeg or png, if you do not want the format of the file to change, just type 'default'
   uploadLimit: 100, // File limit
   sizeLimit: 104857600, // Max file size limit for uploading ( Default: 100mb )
+  panel: {
+    panelEnabled: true, // Enable disable admin panel
+    username: "admin", // Admin panel username
+    password: "admin", // Admin panel password
+  },
 };
 
 module.exports = config;

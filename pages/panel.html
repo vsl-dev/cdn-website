@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <form
+      id="fileForm"
+      enctype="multipart/form-data"
+      action="/file/upload/file"
+      method="POST"
+    >
+      <input type="file" name="file" id="fileInpt" required />
+
+      <input type="text" name="tags" />
+
+      <input type="submit" value="Submit" />
+    </form>
+
+    <form method="POST" action="/file/upload/link">
+      <input type="url" name="url" required />
+
+      <input type="text" name="tags" />
+
+      <input type="submit" value="Submit" />
+    </form>
+
+    <form method="POST" action="/file/delete">
+      <input type="text" name="file" placeholder="fileid" required />
+
+      <input type="submit" value="Submit" />
+    </form>
+
+    <br />
+    <div id="files">
+      <h1 style="margin: 0; padding: 2px">Files:</h1>
+      <div id="images">
+        Images:
+        <div></div>
+      </div>
+      <div id="videos">
+        Videos:
+        <div></div>
+      </div>
+      <div id="audios">
+        Audios:
+        <div></div>
+      </div>
+      <div id="others">
+        Others:
+        <div></div>
+      </div>
+    </div>
+
+    <style>
+      #files {
+        background-color: darkslategrey;
+        border-radius: 11px;
+        padding: 7px;
+        color: white;
+      }
+
+      #images div,
+      #videos div,
+      #audios div,
+      #others div {
+        padding: 0 10px;
+      }
+
+      a {
+        color: white;
+        text-decoration: none;
+      }
+    </style>
+
+    <script>
+      const images = document.querySelector("#images div");
+      const videos = document.querySelector("#videos div");
+      const audios = document.querySelector("#audios div");
+      const others = document.querySelector("#others div");
+
+      function loadImages() {
+        [images, audios, videos, others].forEach((d) => (d.innerHTML = ""));
+        fetch("http://localhost:1200/api/files?sort=type", {
+          method: "GET",
+          headers: {
+            Authrorization: "vsldev",
+            "Content-Type": "application/json",
+          },
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            data.files.images.map((x) => {
+              var div = document.createElement("div");
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
+              images.appendChild(div);
+            });
+            data.files.videos.map((x) => {
+              var div = document.createElement("div");
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
+              videos.appendChild(div);
+            });
+            data.files.audios.map((x) => {
+              var div = document.createElement("div");
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
+              audios.appendChild(div);
+            });
+            data.files.others.map((x) => {
+              var div = document.createElement("div");
+              div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
+              others.appendChild(div);
+            });
+          });
+      }
+
+      loadImages();
+    </script>
+
+    <script>
+      window.onload = () => loadImages();
+      window.onfocus = () => loadImages();
+      window.onblur = () => loadImages();
+    </script>
+  </body>
+</html>
