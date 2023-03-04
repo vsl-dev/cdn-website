@@ -9,7 +9,7 @@ const config = {
   uploadLimit: 100, // File limit
   sizeLimit: 104857600, // Max file size limit for uploading ( Default: 100mb )
   panel: {
-    panelEnabled: true, // Enable disable admin panel
+    panelEnabled: false, // Enable disable admin panel
     username: "admin", // Admin panel username
     password: "admin", // Admin panel password
   },

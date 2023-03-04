@@ -44,6 +44,11 @@ if (config.panel.panelEnabled) {
     }
   });
 
+  router.post("/logout", (req, res) => {
+    req.session = null;
+    res.status(200).json({ code: 200, refresh: true, failed: false });
+  });
+
   router.get("/", isLoggedIn, (req, res) => {
     var panelHtml = fs.readFileSync("./pages/panel.html", "utf8");
     var panelEdited = panelHtml

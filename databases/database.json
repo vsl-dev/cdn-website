@@ -6,12 +6,12 @@
       "source": "file-upload",
       "url": "http://localhost:1200/uploads/0.webp",
       "file": "0.webp",
-      "oldType": "image/webp",
+      "oldType": "image/png",
       "nsfw": false,
-      "tags": [],
-      "adeddIn": 1677855514787,
-      "size": "274.04KB",
-      "sizeBytes": 280622
+      "tags": [""],
+      "adeddIn": 1677949067071,
+      "size": "941.76KB",
+      "sizeBytes": 964366
     }
   }
 }

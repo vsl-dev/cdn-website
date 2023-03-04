@@ -150,7 +150,7 @@ router.post("/upload/link", async (req, res) => {
         .json({ code: 400, message: "You have reached the upload limit" });
     var typeA, typeB, type, id, size, resp;
     resp = await axios.get(req.body.url);
-    size = parseInt(await resp.headers["content-length"]);
+    size = parseInt(await resp.headers["content-length"]) ?? 0;
     typeA = mime.getType(req.body.url);
     typeB = mime.getExtension(typeA);
     type = typeA.includes("image/")

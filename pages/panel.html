@@ -7,16 +7,27 @@
     <title>Panel</title>
   </head>
   <body>
-    <h2 align="center" style="font-style: bold">Admin Panel</h2>
+    <div
+      style="
+        justify-content: space-between;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        align-items: center;
+      "
+    >
+      <h2 align="center" style="font-style: bold">Admin Panel</h2>
+      <button
+        style="padding: 4px; font-size: 16px"
+        onclick="fetch('/panel/logout', {method: 'post'}).then(res => res.json()).then(data => data.refresh ? window.location.reload() : alert('Error') )"
+      >
+        Logout
+      </button>
+    </div>
     <div class="menu">
       <div>
         <p>Upload File</p>
-        <form
-          id="fileForm"
-          enctype="multipart/form-data"
-          action="/file/upload/file"
-          method="POST"
-        >
+        <form id="fileForm" enctype="multipart/form-data ">
           <input
             type="file"
             name="file"
@@ -29,13 +40,44 @@
 
           <button type="submit">Submit</button>
         </form>
+        <script>
+          const fileForm = document.getElementById("fileForm");
+          const fileInpt = document.getElementById("fileInpt");
+
+          fileForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const fileFormData = new FormData(fileForm);
+
+            fileFormData.set("file", fileInpt.files[0]);
+            // fileFormData.append("tags", "");
+
+            var options = {
+              method: "POST",
+              body: fileFormData,
+              headers: {
+                Authrorization: "vsldev.tk",
+              },
+            };
+
+            fetch("/file/upload/file", options)
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+                if (data.code > 200) return alert("Image upload failed");
+                loadImages();
+                alert("Image uploaded");
+              });
+          });
+        </script>
       </div>
       <div>
         <p>Upload File From Url</p>
-        <form method="POST" action="/file/upload/link">
+        <form id="linkForm">
           <input
             type="url"
             name="url"
+            id="linkInpt"
             placeholder="File url for upload"
             required
           />
@@ -44,24 +86,97 @@
 
           <button type="submit">Submit</button>
         </form>
+        <script>
+          const linkForm = document.getElementById("linkForm");
+          const linkInpt = document.getElementById("linkInpt");
+
+          linkForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const linkFormData = new FormData(linkForm);
+
+            var options = {
+              method: "POST",
+              body: JSON.stringify({
+                url: linkFormData.get("url"),
+                tags: linkFormData.get("tags"),
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                Authrorization: "vsldev.tk",
+              },
+            };
+
+            fetch("/file/upload/link", options)
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+                if (data.code > 200) return alert("Image upload failed");
+                loadImages();
+                alert("Image uploaded");
+              });
+          });
+        </script>
       </div>
       <div>
         <p>Delete File</p>
-        <form method="POST" action="/file/delete">
+        <form id="deleteForm">
           <input
             type="text"
             name="file"
+            id="deleteInpt"
             placeholder="File id for deleting"
             required
           />
 
           <button type="submit">Submit</button>
         </form>
+        <script>
+          const deleteForm = document.getElementById("deleteForm");
+          const deleteInpt = document.getElementById("deleteInpt");
+
+          deleteForm.addEventListener("submit", (e) => {
+            e.preventDefault();
+
+            const deleteFormData = new FormData(deleteForm);
+
+            var options = {
+              method: "POST",
+              body: JSON.stringify({
+                file: deleteFormData.get("file"),
+              }),
+              headers: {
+                "Content-Type": "application/json",
+                Authrorization: "vsldev.tk",
+              },
+            };
+
+            fetch("/file/delete", options)
+              .then((res) => res.json())
+              .then((data) => {
+                console.log(data);
+                if (data.code > 200) return alert("Image deleting failed");
+                loadImages();
+                alert("Image deleted");
+              });
+          });
+        </script>
       </div>
     </div>
     <br />
     <div id="files">
-      <h1 style="margin: 0; padding: 2px">Files:</h1>
+      <div
+        style="
+          display: flex;
+          flex-direction: row;
+          flex-wrap: nowrap;
+          align-items: center;
+          justify-content: space-between;
+        "
+      >
+        <h1 style="margin: 0; padding: 2px">Files:</h1>
+        <button onclick="loadImages()">Refresh</button>
+      </div>
       <div id="images">
         Images:
         <div></div>
@@ -92,7 +207,12 @@
     </div>
 
     <footer>
-      <div><p align="center">Created by <a href="https://github.com/vsl-dev">vsl-dev</a></p></div>
+      <div>
+        <p align="center">
+          Created by
+          <a target="_blank" href="https://github.com/vsl-dev">vsl-dev</a>
+        </p>
+      </div>
     </footer>
 
     <style>
@@ -211,9 +331,7 @@
 
     <script>
       window.onload = () => loadImages();
-      window.onfocus = () => loadImages();
-      window.onblur = () => loadImages();
-      setInterval(() => loadImages(), 30000);
+      setInterval(() => loadImages(), 60000);
     </script>
   </body>
 </html>
