@@ -5,5 +5,8 @@
 - Basic api
 - Admin panel
 
-**NOTE: Tag is not fully done, it may not work**
+## Fully customizable cdn server
 
+![image](https://user-images.githubusercontent.com/91078294/222950763-38da738e-0243-4e62-aaa1-46a4f28a57a1.png)
+
+**NOTE: Tag system is not fully done, it may not work**
