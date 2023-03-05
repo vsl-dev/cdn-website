@@ -4,9 +4,41 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style>
+      .loader {
+        width: 100%;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        z-index: 9999;
+        backdrop-filter: blur(15px);
+      }
+
+      .loader h1 {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 20px;
+      }
+    </style>
+    <script>
+      const wait = (delay = 0) =>
+        new Promise((resolve) => setTimeout(resolve, delay));
+      window.addEventListener("DOMContentLoaded", () => {
+        wait(1000).then(() => {
+          loadFiles();
+          console.log("Content loaded!");
+          document.getElementById("loader").style.display = "none";
+        });
+      });
+    </script>
     <title>Panel</title>
   </head>
   <body>
+    <div id="loader" class="loader"><h1>Loading...</h1></div>
+
     <div
       style="
         justify-content: space-between;
@@ -40,36 +72,6 @@
 
           <button type="submit">Submit</button>
         </form>
-        <script>
-          const fileForm = document.getElementById("fileForm");
-          const fileInpt = document.getElementById("fileInpt");
-
-          fileForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-
-            const fileFormData = new FormData(fileForm);
-
-            fileFormData.set("file", fileInpt.files[0]);
-            // fileFormData.append("tags", "");
-
-            var options = {
-              method: "POST",
-              body: fileFormData,
-              headers: {
-                Authrorization: "vsldev.tk",
-              },
-            };
-
-            fetch("/file/upload/file", options)
-              .then((res) => res.json())
-              .then((data) => {
-                console.log(data);
-                if (data.code > 200) return alert("Image upload failed");
-                loadImages();
-                alert("Image uploaded");
-              });
-          });
-        </script>
       </div>
       <div>
         <p>Upload File From Url</p>
@@ -86,37 +88,6 @@
 
           <button type="submit">Submit</button>
         </form>
-        <script>
-          const linkForm = document.getElementById("linkForm");
-          const linkInpt = document.getElementById("linkInpt");
-
-          linkForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-
-            const linkFormData = new FormData(linkForm);
-
-            var options = {
-              method: "POST",
-              body: JSON.stringify({
-                url: linkFormData.get("url"),
-                tags: linkFormData.get("tags"),
-              }),
-              headers: {
-                "Content-Type": "application/json",
-                Authrorization: "vsldev.tk",
-              },
-            };
-
-            fetch("/file/upload/link", options)
-              .then((res) => res.json())
-              .then((data) => {
-                console.log(data);
-                if (data.code > 200) return alert("Image upload failed");
-                loadImages();
-                alert("Image uploaded");
-              });
-          });
-        </script>
       </div>
       <div>
         <p>Delete File</p>
@@ -131,36 +102,6 @@
 
           <button type="submit">Submit</button>
         </form>
-        <script>
-          const deleteForm = document.getElementById("deleteForm");
-          const deleteInpt = document.getElementById("deleteInpt");
-
-          deleteForm.addEventListener("submit", (e) => {
-            e.preventDefault();
-
-            const deleteFormData = new FormData(deleteForm);
-
-            var options = {
-              method: "POST",
-              body: JSON.stringify({
-                file: deleteFormData.get("file"),
-              }),
-              headers: {
-                "Content-Type": "application/json",
-                Authrorization: "vsldev.tk",
-              },
-            };
-
-            fetch("/file/delete", options)
-              .then((res) => res.json())
-              .then((data) => {
-                console.log(data);
-                if (data.code > 200) return alert("Image deleting failed");
-                loadImages();
-                alert("Image deleted");
-              });
-          });
-        </script>
       </div>
     </div>
     <br />
@@ -175,7 +116,7 @@
         "
       >
         <h1 style="margin: 0; padding: 2px">Files:</h1>
-        <button onclick="loadImages()">Refresh</button>
+        <button onclick="loadFiles()">Refresh</button>
       </div>
       <div id="images">
         Images:
@@ -287,13 +228,101 @@
     </style>
 
     <script>
+      const fileForm = document.getElementById("fileForm");
+      const fileInpt = document.getElementById("fileInpt");
+
+      fileForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const fileFormData = new FormData(fileForm);
+
+        fileFormData.set("file", fileInpt.files[0]);
+        // fileFormData.append("tags", "");
+
+        var options = {
+          method: "POST",
+          body: fileFormData,
+          headers: {
+            Authrorization: "vsldev.tk",
+          },
+        };
+
+        fetch("/file/upload/file", options)
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.code > 200) return alert("Image upload failed");
+            loadFiles();
+            alert("Image uploaded");
+          });
+      });
+
+      const deleteForm = document.getElementById("deleteForm");
+      const deleteInpt = document.getElementById("deleteInpt");
+
+      deleteForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const deleteFormData = new FormData(deleteForm);
+
+        var options = {
+          method: "POST",
+          body: JSON.stringify({
+            file: deleteFormData.get("file"),
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authrorization: "vsldev.tk",
+          },
+        };
+
+        fetch("/file/delete", options)
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.code > 200) return alert("Image deleting failed");
+            loadFiles();
+            alert("Image deleted");
+          });
+      });
+
+      const linkForm = document.getElementById("linkForm");
+      const linkInpt = document.getElementById("linkInpt");
+
+      linkForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+
+        const linkFormData = new FormData(linkForm);
+
+        var options = {
+          method: "POST",
+          body: JSON.stringify({
+            url: linkFormData.get("url"),
+            tags: linkFormData.get("tags"),
+          }),
+          headers: {
+            "Content-Type": "application/json",
+            Authrorization: "vsldev.tk",
+          },
+        };
+
+        fetch("/file/upload/link", options)
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.code > 200) return alert("Image upload failed");
+            loadFiles();
+            alert("Image uploaded");
+          });
+      });
+
       const images = document.querySelector("#images div");
       const videos = document.querySelector("#videos div");
       const audios = document.querySelector("#audios div");
       const others = document.querySelector("#others div");
 
-      function loadImages() {
-        [images, audios, videos, others].forEach((d) => (d.innerHTML = ""));
+      function loadFiles() {
+        [images, audios, videos, others].map((d) => (d.innerHTML = ""));
         fetch("http://localhost:1200/api/files?sort=type", {
           method: "GET",
           headers: {
@@ -303,6 +332,7 @@
         })
           .then((res) => res.json())
           .then((data) => {
+            console.log("Files loaded!");
             data.files.images.map((x) => {
               var div = document.createElement("div");
               div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
@@ -326,12 +356,7 @@
           });
       }
 
-      loadImages();
-    </script>
-
-    <script>
-      window.onload = () => loadImages();
-      setInterval(() => loadImages(), 60000);
+      loadFiles();
     </script>
   </body>
 </html>

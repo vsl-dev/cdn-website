@@ -53,6 +53,19 @@ const accessManager = () => {
   };
 }; // Access manager
 
+const logger = (text) => {
+  if (!config.logs) return null;
+  try {
+    var logs = fs.createWriteStream("logs.txt", {
+      flags: "a",
+    });
+    logs.write(`\n${text}`);
+    logs.end();
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 const upload = multer({ dest: "./uploads/" });
 
 router.use(spamLimiter);
@@ -122,6 +135,13 @@ router.post("/upload/file", upload.single("file"), (req, res) => {
 
     fs.rename(tempPath, targetPath, (err) => {
       if (err) return console.log(err, res);
+
+      logger(
+        `File Upload | File ID: ${id.toString()}, File Type: ${type}, Upload Type: file, URL: ${
+          config.baseURL
+        }/uploads/${id}.${type}, Added In: ${new Date().toTimeString()} `
+      );
+      console.log("File Uploaded!");
 
       res.status(200).json({
         code: 200,
@@ -200,6 +220,14 @@ router.post("/upload/link", async (req, res) => {
 
     db.set(`uploads.${id.toString()}`, json);
 
+    logger(
+      `File Upload | File ID: ${id.toString()}, File Type: ${type}, Upload Type: url, URL: ${
+        config.baseURL
+      }/uploads/${id}.${type}, Added In: ${new Date().toTimeString()} `
+    );
+
+    console.log("File Uploaded!");
+
     res.status(200).json({
       code: 200,
       message: "File uploaded!",
@@ -221,6 +249,12 @@ router.post("/delete", (req, res) => {
       if (e) {
         if (info !== undefined) db.delete(`uploads.${info.id}`);
         fs.unlinkSync("./uploads/" + file);
+        logger(
+          `File Delete | File ID: ${info.id}, Added In: ${new Date(
+            info.adeddIn
+          ).toTimeString()}, Deleted In: ${new Date().toTimeString()} `
+        );
+        console.log("File Deleted!");
         return res.status(200).json({ code: 200, message: "File deleted" });
       } else {
         return res.status(404).json({ code: 404, message: "File not found" });
