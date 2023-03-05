@@ -18,6 +18,14 @@ router.get("/random/:type", (req, res) => {
   res.status(200).json({ code: 200, message: null });
 });
 
+router.get("/file/:fileID", (req, res) => {
+  const id = req.params.fileID;
+  const findFile = db.fetch(`uploads.${id}`);
+  if (findFile === null)
+    return res.status(404).json({ code: 404, message: "File not found" });
+  res.status(200).json({ code: 200, message: "Ok", data: findFile ?? {} });
+});
+
 router.get("/files", (req, res) => {
   try {
     var list = {};
