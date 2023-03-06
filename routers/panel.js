@@ -57,7 +57,8 @@ if (config.panel.panelEnabled) {
       .replace("###UPLOAD_LIMIT###", config.uploadLimit)
       .replace("###SIZE_LIMIT###", bytes(config.sizeLimit))
       .replace("###CONVERT_IMGS###", config.convertImagesTo)
-      .replace("###UPLOAD_ONLY###", config.uploadOnly);
+      .replace("###UPLOAD_ONLY###", config.uploadOnly)
+      .replace("###AUTHKEY###", config.authKey);
     res.send(panelEdited);
   });
 }

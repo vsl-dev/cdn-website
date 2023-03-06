@@ -228,6 +228,8 @@
     </style>
 
     <script>
+      const baseURL = window.location.origin;
+      const authKey = "###AUTHKEY###";
       const fileForm = document.getElementById("fileForm");
       const fileInpt = document.getElementById("fileInpt");
 
@@ -272,7 +274,7 @@
           }),
           headers: {
             "Content-Type": "application/json",
-            Authrorization: "vsldev.tk",
+            Authrorization: authKey,
           },
         };
 
@@ -302,7 +304,7 @@
           }),
           headers: {
             "Content-Type": "application/json",
-            Authrorization: "vsldev.tk",
+            Authrorization: authKey,
           },
         };
 
@@ -323,10 +325,10 @@
 
       function loadFiles() {
         [images, audios, videos, others].map((d) => (d.innerHTML = ""));
-        fetch("http://localhost:1200/api/files?sort=type", {
+        fetch("/api/files?sort=type", {
           method: "GET",
           headers: {
-            Authrorization: "vsldev",
+            Authrorization: authKey,
             "Content-Type": "application/json",
           },
         })
