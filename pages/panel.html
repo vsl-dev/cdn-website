@@ -228,13 +228,15 @@
     </style>
 
     <script>
-      const baseURL = window.location.origin;
-      const authKey = "###AUTHKEY###";
+      const authKey = '###AUTHKEY###';
+      const subBtns = document.querySelectorAll("[type='submit']");
       const fileForm = document.getElementById("fileForm");
       const fileInpt = document.getElementById("fileInpt");
 
       fileForm.addEventListener("submit", (e) => {
         e.preventDefault();
+
+		subBtns.forEach((a) => { a.disabled = true; a.textContent = 'Loading'})
 
         const fileFormData = new FormData(fileForm);
 
@@ -245,7 +247,7 @@
           method: "POST",
           body: fileFormData,
           headers: {
-            Authrorization: "vsldev.tk",
+            Authorization: authKey,
           },
         };
 
@@ -256,6 +258,9 @@
             if (data.code > 200) return alert("Image upload failed");
             loadFiles();
             alert("Image uploaded");
+			  			  subBtns.forEach((a) => {
+				  a.disabled = false; a.textContent = 'Submit'
+			  })
           });
       });
 
@@ -265,6 +270,8 @@
       deleteForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
+		subBtns.forEach((a) => { a.disabled = true; a.textContent = 'Loading'})
+		  
         const deleteFormData = new FormData(deleteForm);
 
         var options = {
@@ -274,7 +281,7 @@
           }),
           headers: {
             "Content-Type": "application/json",
-            Authrorization: authKey,
+            Authorization: authKey,
           },
         };
 
@@ -285,6 +292,9 @@
             if (data.code > 200) return alert("Image deleting failed");
             loadFiles();
             alert("Image deleted");
+			  subBtns.forEach((a) => {
+				  a.disabled = false; a.textContent = 'Submit'
+			  })
           });
       });
 
@@ -294,6 +304,8 @@
       linkForm.addEventListener("submit", (e) => {
         e.preventDefault();
 
+		subBtns.forEach((a) => { a.disabled = true; a.textContent = 'Loading'})
+		  
         const linkFormData = new FormData(linkForm);
 
         var options = {
@@ -304,7 +316,7 @@
           }),
           headers: {
             "Content-Type": "application/json",
-            Authrorization: authKey,
+            Authorization: authKey,
           },
         };
 
@@ -315,6 +327,9 @@
             if (data.code > 200) return alert("Image upload failed");
             loadFiles();
             alert("Image uploaded");
+			  			  subBtns.forEach((a) => {
+				  a.disabled = false; a.textContent = 'Submit'
+			  })
           });
       });
 
@@ -322,8 +337,11 @@
       const videos = document.querySelector("#videos div");
       const audios = document.querySelector("#audios div");
       const others = document.querySelector("#others div");
+		  const rBtn = document.getElementById('refreshBtn')
 
       function loadFiles() {
+		 rBtn.textContent = 'Loading';
+		rBtn.disabled = true;
         [images, audios, videos, others].map((d) => (d.innerHTML = ""));
         fetch("/api/files?sort=type", {
           method: "GET",
@@ -355,10 +373,19 @@
               div.innerHTML = `<a target='_blank' href='${x.url}'>${x.file}</a>`;
               others.appendChild(div);
             });
+			  rBtn.textContent = 'Refresh'
+			  rBtn.disabled = false;
           });
       }
 
-      loadFiles();
+		setInterval(() => {
+			subBtns.forEach((a) => {
+				if(a.disabled || a.textContent === 'Loading') {
+					a.disabled = false; a.textContent = 'Submit'
+					console.log(null)
+				}
+			})
+		}, 10000)
     </script>
   </body>
 </html>
